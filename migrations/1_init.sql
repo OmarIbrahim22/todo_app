@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS items (
+    id TEXT PRIMARY KEY,
+    description TEXT NOT NULL,
+    done BOOLEAN NOT NULL DEFAULT 0,
+    priority INTEGER NOT NULL DEFAULT 3,
+    week INTEGER NOT NULL,
+    created_at DATETIME NOT NULL
+);

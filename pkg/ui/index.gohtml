@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Todo Weekly Checklist</title>
+</head>
+<body>
+  <h1>Todo Weekly Checklist</h1>
+  <form id="new-item">
+    <input type="text" name="description" placeholder="Task description" required>
+    <select name="priority">
+      <option value="1">High</option>
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">Low</option>
+    </select>
+    <button type="submit">Add</button>
+  </form>
+  <ul id="items"></ul>
+
+  <script>
+    const week = new Date().getWeekNumber(); // implement getWeekNumber elsewhere
+    fetch(`/items?week=${week}`)
+      .then(r => r.json())
+      .then(data => {
+        const ul = document.getElementById('items');
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.description} [${item.priority}] ${item.done ? '✅' : ''}`;
+          li.onclick = () => fetch(`/items/${item.id}/toggle`, { method: 'PATCH' }).then(_=>location.reload());
+          ul.appendChild(li);
+        });
+      });
+
+    document.getElementById('new-item').onsubmit = e => {
+      e.preventDefault();
+      const f = e.target;
+      fetch('/items', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          description: f.description.value,
+          priority: parseInt(f.priority.value,10),
+          week
+        })
+      }).then(_=>location.reload());
+    };
+  </script>
+</body>
+</html>
